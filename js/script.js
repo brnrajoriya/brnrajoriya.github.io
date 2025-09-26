@@ -101,24 +101,37 @@ window.addEventListener('load', highlightNav);
 // Form Submission
 const contactForm = document.querySelector('.contact-form');
 if (contactForm) {
-    contactForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Get form data
-        const formData = new FormData(this);
-        const formObject = {};
-        formData.forEach((value, key) => {
-            formObject[key] = value;
+    // If the form posts to an external action (FormSubmit), let the browser submit normally
+    const action = contactForm.getAttribute('action') || '';
+    const postsToFormSubmit = action.includes('formsubmit.co');
+
+    if (!postsToFormSubmit) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Local demo behavior only when not using external service
+            const formData = new FormData(this);
+            const formObject = {};
+            formData.forEach((value, key) => {
+                formObject[key] = value;
+            });
+            console.log('Form submitted (local handler):', formObject);
+            alert('Thank you for your message! I will get back to you soon.');
+            this.reset();
         });
-        
-        // Here you would typically send the form data to a server
-        console.log('Form submitted:', formObject);
-        
-        // Show success message
-        alert('Thank you for your message! I will get back to you soon.');
-        this.reset();
-    });
+    }
 }
+
+// Show contact success message if redirected back with hash
+window.addEventListener('load', () => {
+    if (window.location.hash === '#contact-success') {
+        const successEl = document.getElementById('contact-success');
+        if (successEl) successEl.style.display = 'block';
+        // Remove the hash from the URL without reloading
+        if (history && history.replaceState) {
+            history.replaceState(null, document.title, window.location.pathname + window.location.search);
+        }
+    }
+});
 
 // Animate elements on scroll
 const animateOnScroll = () => {
