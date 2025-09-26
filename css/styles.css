@@ -526,6 +526,42 @@ img {
     gap: 10px;
 }
 
+/* Alerts (success/error) */
+.alert {
+    display: none;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    margin-top: 12px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-weight: 500;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+}
+.alert.show {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+.alert-success {
+    background: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+.alert-error {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+.alert .alert-close {
+    float: right;
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
 /* Experience Section */
 .experience {
     background-color: var(--white);

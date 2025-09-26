@@ -101,32 +101,64 @@ window.addEventListener('load', highlightNav);
 // Form Submission
 const contactForm = document.querySelector('.contact-form');
 if (contactForm) {
-    // If the form posts to an external action (FormSubmit), let the browser submit normally
     const action = contactForm.getAttribute('action') || '';
+    const useAjax = contactForm.getAttribute('data-ajax') === 'true';
     const postsToFormSubmit = action.includes('formsubmit.co');
 
-    if (!postsToFormSubmit) {
+    // AJAX path: post to FormSubmit's AJAX endpoint, show inline success/error, no redirect
+    if (useAjax && postsToFormSubmit) {
+        contactForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const successEl = document.getElementById('contact-success');
+            const errorEl = document.getElementById('contact-error');
+            if (successEl) successEl.style.display = 'none';
+            if (errorEl) errorEl.style.display = 'none';
+
+            try {
+                const formData = new FormData(this);
+                // Build AJAX endpoint
+                const email = (new URL(action)).pathname.replace(/^\//, ''); // e.g. 'brn.rajoriya@gmail.com'
+                const ajaxUrl = `https://formsubmit.co/ajax/${email}`;
+                const response = await fetch(ajaxUrl, {
+                    method: 'POST',
+                    headers: { 'Accept': 'application/json' },
+                    body: formData
+                });
+
+                if (response.ok) {
+                    if (successEl) successEl.style.display = 'block';
+                    this.reset();
+                } else {
+                    if (errorEl) errorEl.style.display = 'block';
+                }
+            } catch (err) {
+                if (errorEl) errorEl.style.display = 'block';
+                console.error('Contact form error:', err);
+            }
+        });
+    }
+
+    // Local demo fallback when not using FormSubmit
+    if (!postsToFormSubmit && !useAjax) {
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            // Local demo behavior only when not using external service
             const formData = new FormData(this);
             const formObject = {};
-            formData.forEach((value, key) => {
-                formObject[key] = value;
-            });
+            formData.forEach((value, key) => { formObject[key] = value; });
             console.log('Form submitted (local handler):', formObject);
-            alert('Thank you for your message! I will get back to you soon.');
+            const successEl = document.getElementById('contact-success');
+            if (successEl) successEl.style.display = 'block';
             this.reset();
         });
     }
 }
 
 // Show contact success message if redirected back with hash
+// If a redirect hash was used previously, still handle it gracefully
 window.addEventListener('load', () => {
     if (window.location.hash === '#contact-success') {
         const successEl = document.getElementById('contact-success');
         if (successEl) successEl.style.display = 'block';
-        // Remove the hash from the URL without reloading
         if (history && history.replaceState) {
             history.replaceState(null, document.title, window.location.pathname + window.location.search);
         }

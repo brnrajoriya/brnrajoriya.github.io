@@ -613,11 +613,10 @@
                         <a href="https://www.facebook.com/brn.rajoriya" class="social-icon" aria-label="Facebook brn.rajoriya" target="_blank" rel="noopener"><i class="fab fa-facebook"></i></a>
                     </div>
                 </div>
-                <form class="contact-form" action="https://formsubmit.co/brn.rajoriya@gmail.com" method="POST" accept-charset="UTF-8">
+                <form class="contact-form" action="https://formsubmit.co/brn.rajoriya@gmail.com" method="POST" accept-charset="UTF-8" data-ajax="true">
                     <!-- FormSubmit config -->
                     <input type="hidden" name="_subject" value="New message from portfolio site">
                     <input type="hidden" name="_captcha" value="false">
-                    <input type="hidden" name="_next" value="https://brnrajoriya.github.io/#contact-success">
                     <input type="hidden" name="_template" value="table">
                     <!-- Honeypot field to reduce spam (must remain empty) -->
                     <input type="text" name="_honey" style="display:none">
@@ -636,7 +635,14 @@
                     </div>
                     <button type="submit" class="btn btn-primary">Send Message</button>
                 </form>
-                <div id="contact-success" style="margin-top:10px; display:none; color: #059669; font-weight:600;">Thanks! Your message has been sent.</div>
+                <div id="contact-success" class="alert alert-success">
+                    <button type="button" class="alert-close" onclick="this.parentElement.classList.remove('show')">×</button>
+                    Thanks! Your message has been sent.
+                </div>
+                <div id="contact-error" class="alert alert-error">
+                    <button type="button" class="alert-close" onclick="this.parentElement.classList.remove('show')">×</button>
+                    Sorry, something went wrong. Please try again.
+                </div>
             </div>
         </div>
     </section>
